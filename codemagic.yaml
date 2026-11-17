@@ -13,15 +13,22 @@ workflows:
         script: |
           unzip -q FirsatAvcisi-Android-MVP.zip -d source
 
+      - name: Generate Gradle 8.9 wrapper
+        script: |
+          mkdir -p "$CM_BUILD_DIR/wrapper-bootstrap"
+          cd "$CM_BUILD_DIR/wrapper-bootstrap"
+          gradle wrapper --gradle-version 8.9 --distribution-type bin
+          cp gradlew "$CM_BUILD_DIR/source/"
+          cp -R gradle "$CM_BUILD_DIR/source/"
+          chmod +x "$CM_BUILD_DIR/source/gradlew"
+
       - name: Configure Android SDK
         script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > source/local.properties
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/source/local.properties"
 
       - name: Build APK
         script: |
-          cd source
-          gradle wrapper --gradle-version 8.9
-          chmod +x gradlew
+          cd "$CM_BUILD_DIR/source"
           ./gradlew --no-daemon :app:assembleDebug
 
     artifacts:
