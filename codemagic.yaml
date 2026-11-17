@@ -1,0 +1,28 @@
+
+workflows:
+  firsat-avcisi-android:
+    name: Firsat Avcisi Android APK
+    max_build_duration: 60
+    instance_type: linux_x2
+
+    environment:
+      java: 17
+
+    scripts:
+      - name: Extract Android project
+        script: |
+          unzip -q FirsatAvcisi-Android-MVP.zip -d source
+
+      - name: Configure Android SDK
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > source/local.properties
+
+      - name: Build APK
+        script: |
+          cd source
+          gradle wrapper --gradle-version 8.9
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:assembleDebug
+
+    artifacts:
+      - source/app/build/outputs/apk/debug/app-debug.apk
