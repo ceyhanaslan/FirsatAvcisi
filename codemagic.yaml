@@ -13,11 +13,41 @@ workflows:
         script: |
           unzip -q FirsatAvcisi-Android-MVP.zip -d source
 
+      - name: Fix Java and Kotlin targets
+        script: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("source/app/build.gradle.kts")
+          s = p.read_text()
+
+          if "compileOptions {" not in s:
+              s = s.replace(
+                  "android {",
+                  """android {
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+          """, 1)
+
+          if "kotlinOptions {" not in s:
+              s = s.replace(
+                  "android {",
+                  """android {
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+          """, 1)
+
+          p.write_text(s)
+          print("Java ve Kotlin hedefleri 17 olarak ayarlandı.")
+          PY
+
       - name: Download Gradle 8.9
         script: |
           curl -fL --retry 3 https://services.gradle.org/distributions/gradle-8.9-bin.zip -o /tmp/gradle-8.9-bin.zip
           unzip -q /tmp/gradle-8.9-bin.zip -d /tmp
-          /tmp/gradle-8.9/bin/gradle --version
 
       - name: Configure Android SDK
         script: |
