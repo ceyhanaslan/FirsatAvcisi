@@ -11,7 +11,7 @@ workflows:
     scripts:
       - name: Extract Android project
         script: |
-          unzip -q FirsatAvcisi-Resmi-Kataloglar.zip -d source
+          unzip -q FirsatAvcisi-Resmi-Kataloglar-v3.zip -d source
 
       - name: Fix Java and Kotlin targets
         script: |
